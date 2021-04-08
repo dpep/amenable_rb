@@ -1,0 +1,3 @@
+describe Amenable do
+
+end
