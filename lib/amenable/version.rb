@@ -1,3 +1,3 @@
-class Amenable
+module Amenable
   VERSION = '0.0.1'
 end
