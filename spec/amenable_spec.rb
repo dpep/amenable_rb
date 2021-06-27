@@ -115,5 +115,87 @@ describe Amenable do
         ])
       end
     end
+
+    context 'with a method that does not take params' do
+      before do
+        def test_fn; end
+      end
+
+      it 'works without args' do
+        expect(Amenable.call(method(:test_fn))).to be_nil
+      end
+
+      it 'works with args' do
+        expect(Amenable.call(method(:test_fn), :x, :y)).to be_nil
+      end
+
+      it 'works with kwargs' do
+        expect(Amenable.call(method(:test_fn), a: 1, b: 2)).to be_nil
+      end
+    end
+
+    context 'with a method that only takes args' do
+      before do
+        def test_fn(arg)
+          arg
+        end
+      end
+
+      it 'fails without args' do
+        expect {
+          Amenable.call(method(:test_fn))
+        }.to raise_error(ArgumentError)
+      end
+
+      it 'works with args' do
+        expect(Amenable.call(method(:test_fn), :x, :y)).to be :x
+      end
+
+      it 'works with kwargs' do
+        expect(Amenable.call(method(:test_fn), :x, a: 1, b: 2)).to be :x
+      end
+    end
+
+    context 'with a method that only takes varargs' do
+      before do
+        def test_fn(*args)
+          args
+        end
+      end
+
+      it 'works without args' do
+        expect(Amenable.call(method(:test_fn))).to eq []
+      end
+
+      it 'works with args' do
+        expect(Amenable.call(method(:test_fn), :x, :y)).to eq [ :x, :y ]
+      end
+
+      it 'works with kwargs' do
+        expect(Amenable.call(method(:test_fn), :x, :y, a: 1, b: 2)).to eq [ :x, :y ]
+      end
+    end
+
+    context 'with a method that only takes keywords' do
+      before do
+        def test_fn(a:)
+          a
+        end
+      end
+
+      it 'fails without args' do
+        expect {
+          Amenable.call(method(:test_fn))
+        }.to raise_error(ArgumentError)
+      end
+
+      it 'works with args' do
+        expect(Amenable.call(method(:test_fn), :x, a: 1)).to be 1
+      end
+
+      it 'works with kwargs' do
+        expect(Amenable.call(method(:test_fn), a: 1, b: 2)).to be 1
+      end
+    end
   end
 end

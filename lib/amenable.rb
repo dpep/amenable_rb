@@ -30,11 +30,16 @@ module Amenable
     end
 
     proc do |*args, **kwargs, &block|
-      # remove unreferenced params
-      args.slice! params.count unless rest
-      kwargs = kwargs.slice(*keys) unless keyrest
+      # remove excessive args
+      args = args.slice(0, params.count) unless rest
 
-      fn.call(*args, **kwargs, &block)
+      if !keys.empty? || keyrest
+        # remove excessive keywords
+        kwargs = kwargs.slice(*keys) unless keyrest
+        fn.call(*args, **kwargs, &block)
+      else
+        fn.call(*args, &block)
+      end
     end
   end
 end
