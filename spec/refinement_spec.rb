@@ -85,9 +85,10 @@ class Cat < Animal
     false
   end
 
-  private_class_method amenable def self.agreeable?
+  private_class_method def self.agreeable?
     false
   end
+  amenable :agreeable?
 
   class << self
     private

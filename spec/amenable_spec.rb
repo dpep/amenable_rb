@@ -172,5 +172,11 @@ describe Amenable do
         expect(Amenable.call(method(:test_fn), a: 1, b: 2)).to be 1
       end
     end
+
+    it 'requires a Method or Proc' do
+      expect {
+        Amenable.call(:foo)
+      }.to raise_error(ArgumentError)
+    end
   end
 end
