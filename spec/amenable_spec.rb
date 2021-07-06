@@ -1,31 +1,6 @@
 describe Amenable do
-  describe '.wrap' do
-    let(:fn) { proc {} }
-
-    it 'requires a function-like input' do
-      expect { Amenable.wrap(nil) }.to raise_error(ArgumentError)
-    end
-
-    it 'wraps a function with a function' do
-      res = Amenable.wrap(fn)
-      expect(res).to be_a Proc
-      expect(res).not_to be fn
-    end
-
-    it 'returns a function that takes any input' do
-      params = Amenable.wrap(fn).parameters.map &:first
-      expect(params).to eq [ :rest, :keyrest, :block ]
-    end
-  end
-
   describe '.call' do
     let(:fn) { proc {|x, y = :y, a:, b: 2| [ [ x, y ], { a: a, b: b } ] } }
-
-    it 'calls .wrap under the hood' do
-      fn = proc {}
-      expect(Amenable).to receive(:wrap).with(fn).and_call_original
-      Amenable.call(fn)
-    end
 
     it 'takes args and kwargs as expected' do
       expect(fn).to receive(:call).with(:x, :y, a: 1, b: 2)

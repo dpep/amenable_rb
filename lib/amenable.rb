@@ -4,12 +4,8 @@ module Amenable
   extend self
 
   def call(fn, *args, **kwargs, &block)
-    wrap(fn).call(*args, **kwargs, &block)
-  end
-
-  def wrap(fn)
-    unless fn.respond_to?(:call)
-      raise ArgumentError, "fn must be callable: #{fn}"
+    unless fn.is_a?(Method) || fn.is_a?(Proc)
+      raise ArgumentError, "expecting type Method or Proc, found: #{fn.class}"
     end
 
     rest = keyrest = false
@@ -29,17 +25,15 @@ module Amenable
       end
     end
 
-    proc do |*args, **kwargs, &block|
-      # remove excessive args
-      args = args.slice(0, params.count) unless rest
+    # remove excessive args
+    args = args.slice(0, params.count) unless rest
 
-      if !keys.empty? || keyrest
-        # remove excessive keywords
-        kwargs = kwargs.slice(*keys) unless keyrest
-        fn.call(*args, **kwargs, &block)
-      else
-        fn.call(*args, &block)
-      end
+    if !keys.empty? || keyrest
+      # remove excessive keywords
+      kwargs = kwargs.slice(*keys) unless keyrest
+      fn.call(*args, **kwargs, &block)
+    else
+      fn.call(*args, &block)
     end
   end
 
