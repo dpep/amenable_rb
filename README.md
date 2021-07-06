@@ -1,13 +1,30 @@
 Amenable
 ======
+Removes exessive parameters from function calls.
 
 
 ```ruby
 require 'amenable'
 
+class Dog
+  using Amenable
+
+  amenable def bark(n = 1)
+    ([ :woof ] * n).join(" ")
+  end
+end
+
+
+Dog.new.bark
+> "woof"
+
+Dog.new.bark(2)
+> "woof woof"
+
+Dog.new.bark(2, 3, 4, foo: 5)
+> "woof woof"
 ```
 
-## Usage
 
 ----
 ## Contributing
