@@ -29,6 +29,15 @@ describe Amenable do
       ])
     end
 
+    it 'works with missing args' do
+      # positional args are technically not required
+      
+      expect(Amenable.call(fn, a: 1, b: 2)).to eq([
+        [ nil, :y ],
+        { a: 1, b: 2 },
+      ])
+    end
+
     it 'raises if required arguments are not passed' do
       expect {
         Amenable.call(fn, :x)
@@ -40,10 +49,6 @@ describe Amenable do
 
       expect {
         Amenable.call(fn, :x, :y, b: 2)
-      }.to raise_error(ArgumentError)
-
-      expect {
-        Amenable.call(fn, a: 1, b: 2)
       }.to raise_error(ArgumentError)
     end
 
@@ -58,14 +63,14 @@ describe Amenable do
         ])
       end
 
-      it 'fails without enough args' do
-        expect {
-          Amenable.call(fn, :x)
-        }.to raise_error(ArgumentError)
+      it 'works with missing args' do
+        expect(Amenable.call(fn, a: 1)).to eq([
+          nil, [], 1, {},
+        ])
+      end
 
-        expect {
-          Amenable.call(fn, a: 1)
-        }.to raise_error(ArgumentError)
+      it 'fails on missing kwargs' do
+        expect { Amenable.call }.to raise_error(ArgumentError)
       end
 
       it 'passes through all args' do

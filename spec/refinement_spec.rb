@@ -14,7 +14,7 @@ class Animal
   end
 end
 
-class Dog < Animal
+class Doggy < Animal
   using Amenable
 
   def bark(n = 1)
@@ -24,8 +24,8 @@ class Dog < Animal
 end
 
 
-describe Dog do
-  let(:gino) { Dog.new('Gino') }
+describe Doggy do
+  let(:gino) { Doggy.new('Gino') }
 
   before do
     expect(Amenable).to receive(:call).and_call_original
@@ -57,11 +57,11 @@ describe Dog do
 
   describe '.species' do
     it 'works without args' do
-      expect(Dog.species).to eq 'dog'
+      expect(Doggy.species).to eq 'doggy'
     end
 
     it 'works with any args' do
-      expect(Dog.species(:x, a: 1)).to eq 'dog'
+      expect(Doggy.species(:x, a: 1)).to eq 'doggy'
     end
   end
 end
