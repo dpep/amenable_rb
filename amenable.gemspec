@@ -1,6 +1,4 @@
-package_name = Dir.glob('*.gemspec')[0].split('.')[0]
-require_relative "lib/#{package_name}/version"
-
+require_relative "lib/amenable/version"
 package = Amenable
 
 
@@ -12,9 +10,9 @@ Gem::Specification.new do |s|
   s.description = 'Flexibility when you need it.'
   s.homepage    = "https://github.com/dpep/#{package_name}_rb"
   s.license     = 'MIT'
+  s.files       = `git ls-files * ':!:spec'`.split("\n")
 
-  s.files       = Dir.glob('lib/**/*')
-  s.test_files  = Dir.glob('spec/**/*_spec.rb')
+  s.required_ruby_version = ">= 3"
 
   s.add_development_dependency 'byebug'
   s.add_development_dependency 'codecov'
