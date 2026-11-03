@@ -2,6 +2,7 @@
 - drop Ruby 3.0 and 3.1 (end of life); requires Ruby >= 3.2
 - fix: amenable methods no longer run with the first caller's `self` (instances, classes sharing a module, subclasses calling amenable class methods, concurrent first calls)
 - fix: amenable methods pass keyword arguments through instead of dropping them (`opt(1, b: 3)` returned the default `b`, `**opts` came back empty)
+- fix: keywords sent to a method with no keyword params are passed through as Ruby would bind them (to `*rest` or an open positional slot, e.g. `def m(opts = {})`, and to C methods like `String#encode`) instead of being dropped; they're only stripped when Ruby would reject them
 - fix: in a class or module body, `amenable` wraps the instance method even when a class method of the same name exists; `amenable def initialize` now works; module_function methods are wrapped on both the module and its includers
 - fix: `amenable` at the top level, and on a plain object's private singleton method, no longer crashes
 - fix: `amenable` with an unknown or inherited method raises NoMethodError naming the method and receiver

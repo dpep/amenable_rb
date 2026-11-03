@@ -65,6 +65,11 @@ describe 'amenable wrapper' do
       expect(klass.new.pos({ a: 1 })).to eq(a: 1)
     end
 
+    it 'passes keywords as a Hash to an options-hash method' do
+      klass = Class.new { amenable def opts(h = {}) = h }
+      expect(klass.new.opts(a: 1)).to eq(a: 1)
+    end
+
     it 'still strips unknown keywords' do
       expect(klass.new.opt(1, :x, b: 3, c: 4)).to eq [ 1, 3 ]
     end

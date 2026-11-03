@@ -151,8 +151,24 @@ describe Amenable do
         expect(Amenable.call(method(:test_fn), :x, :y)).to eq [ :x, :y ]
       end
 
-      it 'works with kwargs' do
-        expect(Amenable.call(method(:test_fn), :x, :y, a: 1, b: 2)).to eq [ :x, :y ]
+      it 'passes kwargs through, as a direct call would' do
+        expect(Amenable.call(method(:test_fn), :x, :y, a: 1, b: 2)).to eq [ :x, :y, { a: 1, b: 2 } ]
+      end
+    end
+
+    context 'with keywords but no keyword params' do
+      it 'passes them as a Hash to an open positional slot' do
+        expect(Amenable.call(->(a, opts = {}) { opts }, 1, verbose: true)).to eq(verbose: true)
+        expect(Amenable.call(->(h) { h }, a: 1)).to eq(a: 1)
+      end
+
+      it 'strips them when there is no slot left' do
+        expect(Amenable.call(->(a) { a }, 1, b: 2)).to eq 1
+        expect(Amenable.call(->(a, opts = {}) { opts }, 1, 2, verbose: true)).to eq 2
+      end
+
+      it 'passes them to C methods, which take anything' do
+        expect(Amenable.call("caf\u00e9".method(:encode), "US-ASCII", undef: :replace)).to eq "caf?"
       end
     end
 
