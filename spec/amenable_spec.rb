@@ -202,6 +202,14 @@ describe Amenable do
       end
     end
 
+    context 'with **nil' do
+      it 'strips keywords' do
+        fn = ->(a, b = 1, **nil) { [ a, b ] }
+
+        expect(Amenable.call(fn, 1, k: 2)).to eq [ 1, 1 ]
+      end
+    end
+
     context 'with a non-lambda proc' do
       it 'auto-splats a lone Array, as a direct call does' do
         fn = proc { |a, b = 2| [ a, b ] }

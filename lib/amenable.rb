@@ -8,7 +8,7 @@ module Amenable
       raise ArgumentError, "expecting type Method or Proc, found: #{fn.class}"
     end
 
-    rest = keyrest = false
+    rest = keyrest = nokey = false
     # a non-lambda proc drops extra positionals itself, and trimming them can
     # make it auto-splat a lone Array
     loose = fn.is_a?(Proc) && !fn.lambda?
@@ -25,13 +25,17 @@ module Amenable
         rest = true
       when :keyrest
         keyrest = true
+      when :nokey
+        nokey = true
       end
     end
 
     # remove excessive args
     args = args.slice(0, params.count) unless rest || loose
 
-    if !keys.empty? || keyrest
+    if nokey
+      kwargs = {}
+    elsif !keys.empty? || keyrest
       # remove excessive keywords
       kwargs = kwargs.slice(*keys) unless keyrest
     elsif !(rest || loose || args.size < params.count)
