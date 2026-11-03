@@ -1,3 +1,6 @@
+###  Unreleased
+- drop Ruby 3.0 and 3.1 (end of life); requires Ruby >= 3.2
+
 ###  v0.1.0  (2021-07-05)
 - readme spec
 - test coverage

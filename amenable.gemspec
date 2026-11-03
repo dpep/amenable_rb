@@ -14,7 +14,13 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.files       = `git ls-files * ':!:spec'`.split("\n")
 
-  s.required_ruby_version = ">= 3"
+  s.metadata = {
+    "changelog_uri" => "#{s.homepage}/blob/main/CHANGELOG.md",
+    "rubygems_mfa_required" => "true",
+    "source_code_uri" => s.homepage,
+  }
+
+  s.required_ruby_version = ">= 3.2"
 
   s.add_development_dependency 'debug'
   s.add_development_dependency 'rspec'
