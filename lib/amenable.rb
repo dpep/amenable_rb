@@ -31,14 +31,14 @@ module Amenable
     if !keys.empty? || keyrest
       # remove excessive keywords
       kwargs = kwargs.slice(*keys) unless keyrest
-      fn.call(*args, **kwargs, &block)
-    elsif rest || args.size < params.count
+    elsif !(rest || args.size < params.count)
       # no keyword params: Ruby binds keywords to *rest or an open positional
-      # slot as a Hash, so pass them along rather than change the call
-      fn.call(*args, **kwargs, &block)
-    else
-      fn.call(*args, &block)
+      # slot as a Hash, so strip them only when there's nowhere for them to go
+      kwargs = {}
     end
+
+    # `**{}` is not a no-op: it stops a non-lambda proc auto-splatting
+    kwargs.empty? ? fn.call(*args, &block) : fn.call(*args, **kwargs, &block)
   end
 
   refine Object do

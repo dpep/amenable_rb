@@ -194,6 +194,14 @@ describe Amenable do
       end
     end
 
+    context 'with a non-lambda proc' do
+      it 'auto-splats a lone Array, as a direct call does' do
+        fn = proc { |a, b = 2| [ a, b ] }
+
+        expect(Amenable.call(fn, [ 5, 1 ])).to eq fn.call([ 5, 1 ])
+      end
+    end
+
     it 'requires a Method or Proc' do
       expect {
         Amenable.call(:foo)
