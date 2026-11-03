@@ -38,4 +38,35 @@ describe 'amenable wrapper' do
       expect(results).to eq 20.times.to_a
     end
   end
+
+  describe 'keywords' do
+    let(:klass) do
+      Class.new do
+        amenable def req(a:) = a
+        amenable def opt(a, b: 2) = [ a, b ]
+        amenable def rest(**o) = o
+      end
+    end
+
+    it 'passes required keywords through' do
+      expect(klass.new.req(a: 1)).to eq 1
+    end
+
+    it 'passes optional keywords through' do
+      expect(klass.new.opt(1, b: 3)).to eq [ 1, 3 ]
+    end
+
+    it 'passes keywords to **rest' do
+      expect(klass.new.rest(a: 1)).to eq(a: 1)
+    end
+
+    it 'keeps an explicit Hash positional' do
+      klass = Class.new { amenable def pos(h) = h }
+      expect(klass.new.pos({ a: 1 })).to eq(a: 1)
+    end
+
+    it 'still strips unknown keywords' do
+      expect(klass.new.opt(1, :x, b: 3, c: 4)).to eq [ 1, 3 ]
+    end
+  end
 end

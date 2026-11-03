@@ -69,9 +69,9 @@ module Amenable
       end
 
       # rebuild method with Amenable wrapper
-      definer.call(name) do |*args, &block|
+      definer.call(name) do |*args, **kwargs, &block|
         # bind per call: `fn` is shared by every receiver, so never reassign it
-        Amenable.call(fn.bind(self), *args, &block)
+        Amenable.call(fn.bind(self), *args, **kwargs, &block)
       end
 
       name
