@@ -8,16 +8,24 @@ describe Amenable do
     end
 
     it 'removes excessive parameters' do
-      expect(fn).to receive(:call).with(:x, :y, a: 1, b: 2)
-      Amenable.call(fn, :x, :y, :z, a: 1, b: 2, c: 3)
+      expect(fn).to receive(:call).and_call_original
+
+      expect(Amenable.call(fn, :x, :y, :z, a: 1, b: 2, c: 3)).to eq([
+        [ :x, :y ],
+        { a: 1, b: 2 },
+      ])
     end
 
     it 'works with splat operator' do
       args = [ :x, :y, :z ]
       kwargs = { a: 1, b: 2, c: 3 }
 
-      expect(fn).to receive(:call).with(:x, :y, a: 1, b: 2)
-      Amenable.call(fn, *args, **kwargs)
+      expect(fn).to receive(:call).and_call_original
+
+      expect(Amenable.call(fn, *args, **kwargs)).to eq([
+        [ :x, :y ],
+        { a: 1, b: 2 },
+      ])
     end
 
     it 'works with default args' do
@@ -199,6 +207,14 @@ describe Amenable do
         fn = proc { |a, b = 2| [ a, b ] }
 
         expect(Amenable.call(fn, [ 5, 1 ])).to eq fn.call([ 5, 1 ])
+      end
+
+      it 'leaves extra positionals and keywords for the proc to drop' do
+        # `|a,|` reports the same parameters as `|a|`, but auto-splats a lone Array
+        fn = proc { |a,| a }
+
+        expect(Amenable.call(fn, [ 5, 1 ], :x)).to eq fn.call([ 5, 1 ], :x)
+        expect(Amenable.call(fn, [ 5, 1 ], k: 2)).to eq fn.call([ 5, 1 ], k: 2)
       end
     end
 

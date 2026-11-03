@@ -9,6 +9,9 @@ module Amenable
     end
 
     rest = keyrest = false
+    # a non-lambda proc drops extra positionals itself, and trimming them can
+    # make it auto-splat a lone Array
+    loose = fn.is_a?(Proc) && !fn.lambda?
     params = []
     keys = []
 
@@ -26,12 +29,12 @@ module Amenable
     end
 
     # remove excessive args
-    args = args.slice(0, params.count) unless rest
+    args = args.slice(0, params.count) unless rest || loose
 
     if !keys.empty? || keyrest
       # remove excessive keywords
       kwargs = kwargs.slice(*keys) unless keyrest
-    elsif !(rest || args.size < params.count)
+    elsif !(rest || loose || args.size < params.count)
       # no keyword params: Ruby binds keywords to *rest or an open positional
       # slot as a Hash, so strip them only when there's nowhere for them to go
       kwargs = {}
