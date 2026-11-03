@@ -72,6 +72,23 @@ describe 'amenable method lookup' do
     expect { mod.both(1, 2) }.to raise_error(ArgumentError)
   end
 
+  it 'leaves a same-name singleton method defined on the same line alone' do
+    mod = Module.new do
+      def self.both(a) = "singleton #{a}"; amenable def both(a) = "instance #{a}"
+    end
+
+    expect { mod.both(1, 2) }.to raise_error(ArgumentError)
+  end
+
+  it 'leaves a same-name singleton method from the same define_method alone' do
+    mod = Module.new do
+      [ singleton_class, self ].each { |owner| owner.send(:define_method, :both) { |a| a } }
+      amenable :both
+    end
+
+    expect { mod.both(1, 2) }.to raise_error(ArgumentError)
+  end
+
   context 'on a plain object' do
     let(:obj) { Object.new }
 

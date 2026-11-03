@@ -75,8 +75,11 @@ module Amenable
       # in a class body, `def foo` means the instance method; only fall back
       # to the singleton side when there isn't one
       if mod.is_a?(Module) && defines.call(mod)
-        # module_function leaves an identical copy on the singleton: wrap both
-        copy = defines.call(mod.singleton_class) &&
+        # module_function leaves a public copy on the singleton and makes the
+        # instance method private: wrap both. Location alone can't tell a copy
+        # from another def on the same line.
+        copy = mod.private_method_defined?(name, false) &&
+          mod.singleton_class.public_method_defined?(name, false) &&
           mod.singleton_class.instance_method(name).source_location == mod.instance_method(name).source_location
 
         wrap.call(mod)
