@@ -1,4 +1,4 @@
-###  Unreleased
+###  v0.1.1  (2026-11-03)
 - drop Ruby 3.0 and 3.1 (end of life); requires Ruby >= 3.2
 - fix: amenable methods no longer run with the first caller's `self` (instances, classes sharing a module, subclasses calling amenable class methods, concurrent first calls)
 - fix: amenable methods pass keyword arguments through instead of dropping them (`opt(1, b: 3)` returned the default `b`, `**opts` came back empty)
