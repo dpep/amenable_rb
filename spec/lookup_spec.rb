@@ -91,4 +91,21 @@ describe 'amenable method lookup' do
       expect { obj.bar(1) }.to raise_error(NoMethodError)
     end
   end
+
+  context 'when the method is not found' do
+    let(:parent) { Class.new { def inherited_only = 1 } }
+    let(:klass) { Class.new(parent) }
+
+    it 'names the method and receiver' do
+      expect { klass.amenable(:nope) }.to raise_error(NoMethodError) { |e|
+        expect(e.message).to include('nope', klass.inspect)
+        expect(e.name).to be :nope
+        expect(e.receiver).to be klass
+      }
+    end
+
+    it 'refuses an inherited method' do
+      expect { klass.amenable(:inherited_only) }.to raise_error(NoMethodError, /inherited_only/)
+    end
+  end
 end

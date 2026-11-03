@@ -73,7 +73,11 @@ module Amenable
       elsif defines.call(singleton_class)
         wrap.call(singleton_class)
       else
-        raise NoMethodError
+        raise NoMethodError.new(
+          "amenable: no method '#{name}' defined directly on #{inspect}",
+          name,
+          receiver: self,
+        )
       end
 
       name
