@@ -39,39 +39,38 @@ module Amenable
 
   refine Object do
     def amenable(name)
-      # identify method and way to dynamically redefine it
-      if methods(false).include?(name)
-        fn = method(name).unbind # rebind later to support subclassing
-        definer = method(:define_singleton_method)
-      elsif private_methods(false).include?(name)
-        fn = method(name).unbind
-        definer = ->(name, &block) do
-          define_singleton_method(name, &block)
-          private_class_method(name)
-        end
-      elsif private_instance_methods(false).include?(name)
-        fn = instance_method(name)
-        definer = ->(name, &block) do
-          define_method(name, &block)
-          private(name)
-        end
-      elsif protected_instance_methods(false).include?(name)
-        fn = instance_method(name)
-        definer = ->(name, &block) do
-          define_method(name, &block)
-          protected(name)
-        end
-      elsif instance_methods(false).include?(name)
-        fn = instance_method(name)
-        definer = method(:define_method)
-      else
-        raise NoMethodError
+      defines = ->(owner) do
+        owner.method_defined?(name, false) || owner.private_method_defined?(name, false)
       end
 
-      # rebuild method with Amenable wrapper
-      definer.call(name) do |*args, **kwargs, &block|
-        # bind per call: `fn` is shared by every receiver, so never reassign it
-        Amenable.call(fn.bind(self), *args, **kwargs, &block)
+      wrap = ->(owner) do
+        fn = owner.instance_method(name)
+        visibility =
+          if owner.private_method_defined?(name, false) then :private
+          elsif owner.protected_method_defined?(name, false) then :protected
+          else :public
+          end
+
+        owner.send(:define_method, name) do |*args, **kwargs, &block|
+          # bind per call: `fn` is shared by every receiver, so never reassign it
+          Amenable.call(fn.bind(self), *args, **kwargs, &block)
+        end
+        owner.send(visibility, name)
+      end
+
+      # in a class body, `def foo` means the instance method; only fall back
+      # to the singleton side when there isn't one
+      if is_a?(Module) && defines.call(self)
+        # module_function leaves an identical copy on the singleton: wrap both
+        copy = defines.call(singleton_class) &&
+          singleton_class.instance_method(name).source_location == instance_method(name).source_location
+
+        wrap.call(self)
+        wrap.call(singleton_class) if copy
+      elsif defines.call(singleton_class)
+        wrap.call(singleton_class)
+      else
+        raise NoMethodError
       end
 
       name
