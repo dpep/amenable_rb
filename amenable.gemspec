@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   DESCRIPTION
   s.homepage    = "https://github.com/dpep/amenable_rb"
   s.license     = 'MIT'
-  s.files       = `git ls-files * ':!:spec'`.split("\n")
+  s.files       = `git ls-files * ':!:spec' ':!:CLAUDE.md'`.split("\n")
 
   s.metadata = {
     "changelog_uri" => "#{s.homepage}/blob/main/CHANGELOG.md",
