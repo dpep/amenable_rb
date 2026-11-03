@@ -58,15 +58,18 @@ module Amenable
         owner.send(visibility, name)
       end
 
+      # a top-level `def` lands on Object, not on main's singleton class
+      mod = TOPLEVEL_BINDING.receiver.equal?(self) ? Object : self
+
       # in a class body, `def foo` means the instance method; only fall back
       # to the singleton side when there isn't one
-      if is_a?(Module) && defines.call(self)
+      if mod.is_a?(Module) && defines.call(mod)
         # module_function leaves an identical copy on the singleton: wrap both
-        copy = defines.call(singleton_class) &&
-          singleton_class.instance_method(name).source_location == instance_method(name).source_location
+        copy = defines.call(mod.singleton_class) &&
+          mod.singleton_class.instance_method(name).source_location == mod.instance_method(name).source_location
 
-        wrap.call(self)
-        wrap.call(singleton_class) if copy
+        wrap.call(mod)
+        wrap.call(mod.singleton_class) if copy
       elsif defines.call(singleton_class)
         wrap.call(singleton_class)
       else
