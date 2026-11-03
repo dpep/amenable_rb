@@ -70,12 +70,8 @@ module Amenable
 
       # rebuild method with Amenable wrapper
       definer.call(name) do |*args, &block|
-        # bind method to instance or subclass, which is now available
-        if fn.respond_to? :bind
-          fn = fn.bind(self)
-        end
-
-        Amenable.call(fn, *args, &block)
+        # bind per call: `fn` is shared by every receiver, so never reassign it
+        Amenable.call(fn.bind(self), *args, &block)
       end
 
       name
