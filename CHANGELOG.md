@@ -6,6 +6,8 @@
 - fix: in a class or module body, `amenable` wraps the instance method even when a class method of the same name exists; `amenable def initialize` now works; module_function methods are wrapped on both the module and its includers
 - fix: `amenable` at the top level, and on a plain object's private singleton method, no longer crashes
 - fix: `amenable` with an unknown or inherited method raises NoMethodError naming the method and receiver
+- fix: a non-lambda proc given a lone Array now auto-splats it as a direct call does (`Amenable.call(proc { |a, b = 2, k: 1| [a, b] }, [5, 1])` returned `[[5, 1], 2]`)
+- fix: extra positionals and keywords sent to a non-lambda proc are left for the proc to drop, as a direct call does (`proc { |a,| a }` given `([5, 1], :x)` returned 5 instead of `[5, 1]`)
 
 ###  v0.1.0  (2021-07-05)
 - readme spec
