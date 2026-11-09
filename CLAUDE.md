@@ -16,6 +16,6 @@ Known limits, documented rather than fixed: a wrapped method reports the wrapper
 
 ## Development
 
-- System ruby is too old (the gem needs >= 3.2). Run `RBENV_VERSION=4.0.6 rbenv exec bundle exec rspec`; 3.4.10 is also installed.
+- System ruby is too old (the gem needs >= 3.3). Run `RBENV_VERSION=4.0.6 rbenv exec bundle exec rspec`; 3.4.10 is also installed.
 - `Gemfile.lock` is gitignored. If bundler fails to load, a stale local lock may pin an ancient bundler: delete it and run `bundle install`.
 - `spec/readme_spec.rb` runs the README's Dog example. If you change one, change the other.

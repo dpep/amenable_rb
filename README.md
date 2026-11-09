@@ -31,7 +31,7 @@ Dog.new.bark(2, 3, 4, foo: 5)
 ## Usage
 
 ```ruby
-gem "amenable"  # requires Ruby >= 3.2
+gem "amenable"  # requires Ruby >= 3.3
 ```
 
 Activate the refinement with `using Amenable`, then wrap a method as you define it (`amenable def bark ...`) or afterwards by name (`amenable :bark`). It works on instance, private, protected, and class methods (`amenable def self.build`), on `module_function` methods, and at the top level.
